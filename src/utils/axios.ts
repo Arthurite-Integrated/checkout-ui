@@ -1,37 +1,36 @@
 import axios from 'axios';
 import env from '../config/env';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store';
 
-// Create an instance of Axios
-const axiosInstance = axios.create({
-  baseURL: env.VITE_SERVER_URL, // your API base URL
+// Create axios instance
+const api = axios.create({
+  baseURL: env.VITE_SERVER_URL, // Your API base URL
+  timeout: 10000,
 });
 
-// Set up an interceptor to add the token to each request
-axiosInstance.interceptors.request.use(
+// Request interceptor to add auth token
+api.interceptors.request.use(
   (config) => {
-    // Get the token from localStorage
-    const token = localStorage.getItem('authData');
-    console.log(token)
-
-    // If the token exists, attach it to the Authorization header
+    const token = useAuthStore.getState().token;
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor to handle token expiration
+api.interceptors.response.use(
+  (response) => response,
   (error) => {
-    const navigate = useNavigate(); // For React Router v6
-    if (error.response && error.response.status === 401) {
-      toast.error('Please login again to continue');
-      localStorage.removeItem('authToken');
-      navigate('/login'); // Redirect to login page
+    if (error.response?.status === 401) {
+      // Token expired or invalid
+      useAuthStore.getState().logout();
+      window.location.href = '/'; // Redirect to login
     }
     return Promise.reject(error);
   }
 );
 
-// Export axios instance to use throughout the app
-export default axiosInstance;
+export default api;

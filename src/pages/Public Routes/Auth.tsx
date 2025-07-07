@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import logo from './../assets/checkout.png'
-import Github from './../assets/github.svg'
-import Server from '../server';
-import useAuth from '../store';
-import { useNavigate } from 'react-router-dom';
+import logo from './../../assets/checkout.png'
+import Github from './../../assets/github.svg'
+import Server from '../../server';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../store';
 
 // Simulating React Hook Form functionality
 const useForm = (defaultValues = {}) => {
@@ -84,70 +84,67 @@ const useForm = (defaultValues = {}) => {
   };
 };
 
+const loginValidationSchema = {
+  email: {
+    required: { message: "Email is required" },
+    pattern: {
+      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+      message: "Please enter a valid email address"
+    }
+  },
+  password: {
+    required: { message: "Password is required" },
+    minLength: {
+      value: 6,
+      message: "Password must be at least 6 characters"
+    }
+  }
+};
+
+const registerValidationSchema = {
+  ...loginValidationSchema,
+  firstName: {
+    required: { message: "First name is required" },
+    minLength: {
+      value: 2,
+      message: "First name must be at least 2 characters"
+    }
+  },
+  lastName: {
+    required: { message: "Last name is required" },
+    minLength: {
+      value: 2,
+      message: "Last name must be at least 2 characters"
+    }
+  }
+};
+
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const { register, handleSubmit, reset, formState: { errors } }:{formState: {errors: any}} = useForm();
-  const { login, register: reg, data } = useAuth();
+  const { login, register: reg, data } = useAuthStore();
   const navigate = useNavigate()
+  const location = useLocation();
   // const { state } = useLocation();
+  const from = location.state?.from?.pathname || '/dashboard';
 
-  // const msg = state?.msg;
 
-  // useEffect(() => {
-  //   if(msg) alert('Please login to access dashboard') 
-  // }, [msg])
-
-  useEffect(() => {
-   if (data) navigate('/dashboard');
-  }, [data, navigate]);
-
-  const loginValidationSchema = {
-    email: {
-      required: { message: "Email is required" },
-      pattern: {
-        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-        message: "Please enter a valid email address"
-      }
-    },
-    password: {
-      required: { message: "Password is required" },
-      minLength: {
-        value: 6,
-        message: "Password must be at least 6 characters"
-      }
-    }
-  };
-
-  const registerValidationSchema = {
-    ...loginValidationSchema,
-    firstName: {
-      required: { message: "First name is required" },
-      minLength: {
-        value: 2,
-        message: "First name must be at least 2 characters"
-      }
-    },
-    lastName: {
-      required: { message: "Last name is required" },
-      minLength: {
-        value: 2,
-        message: "Last name must be at least 2 characters"
-      }
-    }
-  };
 
   const onSubmit = async (data) => {
     if (isLogin) {
-      await login(data.email, data.password)
+      const {success} = await login(data.email, data.password)
+      if(success) {
+        navigate('/dashboard', { replace: true });
+      }
     } else {
-      const res = await reg(data.firstName, data.lastName, data.email, data.password)
-      console.log(res)
-      if(res) {
+      const { success } = await reg(data.firstName, data.lastName, data.email, data.password)
+      console.log(success)
+      if(success) {
         reset()
         alert("Register Success, Please proceed to login with your credentials 😊")
         setIsLogin(true)
       } 
-      // setIsLogin(false)
+      setIsLogin(false)
     }
   };
 

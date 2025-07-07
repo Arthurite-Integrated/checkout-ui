@@ -10,6 +10,7 @@ const EnvSchema = z.object({
   MODE: z.string(),
   PROD: z.boolean(),
   SSR: z.boolean(),
+  VITE_TELEGRAM_BOT_URL: z.string()
 })
 
 export type EnvSchema = z.infer<typeof EnvSchema>

@@ -1,45 +1,85 @@
-import { create } from 'zustand'
-import Server from './../server'
-import { Navigate } from 'react-router-dom'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import server from '../server';
 
-interface Auth {
-  data: null | object
-  login: (email: string, password: string) => void,
-  register: (first_name: string, last_name: string, email: string, password: string) => void,
-  isAuthenticated: () => boolean
-  logout: () => void
+interface AuthState {
+  user: any;
+  business: any;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
-// Helper to get data from localStorage
-const getStoredData = () => {
-  const stored = localStorage.getItem('authData');
-  return stored ? JSON.parse(stored) : null;
-};
+interface AuthActions {
+  login: (email: string, password: string) => Promise<{ success: boolean }>;
+  register: (first_name: string, last_name: string, email: string, password: string) => Promise<{ success: boolean } | false>;
+  logout: () => void;
+  setUser: (user: any) => void;
+  setToken: (token: any) => void;
+}
 
-const useAuth = create<Auth>((set) => ({
-  data: getStoredData(),
-  isAuthenticated: () => !!getStoredData(),
-  login: async (email: string, password: string) => {
-    const { data, message, status } = await Server.LoginAdmin(email, password);
-    if (status !== 'OK') return alert(message);
-    localStorage.setItem('authData', JSON.stringify(data));
-    set({ data });
-    alert('User Logged in ✅');
-  },
-  register: async (first_name: string, last_name: string, email: string, password: string) => {
-    const { data, message, status } = await Server.RegisterAdmin(first_name, last_name, email, password);
-    if (status !== 'CREATED') { 
-      alert(message);
-      return false
+type Auth = AuthState & AuthActions;
+
+export const useAuthStore = create<Auth>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      business: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+
+      login: async (email: string, password: string) => {
+        set({ isLoading: true });
+        const { data, message, status } = await server.LoginAdmin(email, password);
+        if (status !== 'OK') {
+          alert(message);
+          set({ isLoading: false });
+          return { success: false };
+        }
+        alert(message);
+        set({
+          user: data.admin,
+          business: data.business,
+          token: data.token,
+          isAuthenticated: true,
+          isLoading: false
+        });
+        console.log(data.token)
+        console.log(useAuthStore.getState())
+        return { success: true };
+      },
+
+      register: async (first_name: string, last_name: string, email: string, password: string) => {
+        const { message, status } = await server.RegisterAdmin(first_name, last_name, email, password);
+        if (status !== 'CREATED') { 
+          alert(message);
+          set({ isLoading: false });
+          return { success: false };
+        }
+        return { success: true };
+      },
+      
+      logout: () => {
+        set({
+          user: null,
+          business: null,
+          token: null,
+          isAuthenticated: false
+        });
+      },
+      
+      setUser: (user: any) => set({ user }),
+      setToken: (token: any) => set({ token, isAuthenticated: !!token }),
+    }),
+    {
+      name: 'auth-storage',
+      partialize: (state) => ({
+        user: state.user,
+        business: state.business,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated
+      })
     }
-    localStorage.setItem('authData', JSON.stringify(data));
-    // set({ data });
-    return true;
-  },
-  logout: () => {
-    localStorage.removeItem('authData');
-    set({ data: null });
-  },
-}))
-
-export default useAuth
+  )
+);

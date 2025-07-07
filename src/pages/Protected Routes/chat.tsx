@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom"
 import { useState, useRef, useEffect } from 'react';
 import { Send, Camera, Image, X, Bot, User, ShoppingCart, Heart, Share2, Bookmark, Paperclip } from 'lucide-react';
-import Server from './../server'
+import Server from './../../server'
 import {z} from 'zod'
-import ErrorPage from "../components/ErrorPage";
+import ErrorPage from "./../../components/ErrorPage";
 
 function Chat() {
   const { id } = useParams();

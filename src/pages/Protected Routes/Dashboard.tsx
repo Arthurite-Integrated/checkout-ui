@@ -1,25 +1,205 @@
-import { useEffect, useState } from 'react';
-import { ShoppingCart, Package, Building2, QrCode, Edit3, Trash2, Menu, Home, Users, Star, TrendingUp, Plus } from 'lucide-react';
-import logo from './../assets/logo.png'
-import text from './../assets/text_1.png'
-import useAuth from './../store';
+import { useState } from 'react';
+import { ShoppingCart, Package, Building2, Smile as Smile, QrCode, Edit3, Trash2, Menu, Home, Users, Star, TrendingUp, Plus } from 'lucide-react';
+import logo from './../../assets/logo.png'
+import text from './../../assets/text_1.png'
+import { useAuthStore } from './../../store';
 import { useNavigate } from 'react-router-dom';
-import ErrorPage from '../components/ErrorPage';
+import ErrorPage from '../../components/ErrorPage';
 import QRCode from 'react-qr-code';
-import env from '../config/env';
+import env from '../../config/env';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../utils/axios';
+
+async function fetchUsers() {
+  try {
+    const { data: { data } } = await api({
+      method: "get",
+      url: '/user',
+    })
+    console.log("Spectra: ",data)
+    return data
+  } catch(e) {
+    console.log(e)
+    throw new Error('Error fetching users')
+  }
+}
+
+async function fetchProducts() {
+
+}
+
+function UsersComponent() {
+  const { isPending, error, data } = useQuery({ queryKey: ['users'], queryFn: fetchUsers })
+  return (
+    <div className="space-y-8">
+      {/* User Count & Filters */}
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-0">
+          <h3 className="text-xl font-semibold text-white">Users</h3>
+          <span className="text-sm text-gray-400">Total Users: {/*data.length*/}</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <input
+            type="text"
+            placeholder="Search users"
+            className="px-4 py-2 bg-[#202121] border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+          />
+        </div>
+      </div>
+      { error ? console.log(`Error: ${error}`) : ""}
+      {/* No users message */}
+      {!data || data.length === 0 ? (
+        <div className="text-center text-white">
+          <p>{isPending ? "Loading users..." : "No users found"}</p>
+        </div>
+      ) : (
+        <div>
+          {/* Users List */}
+          {data.map((user) => (
+            <div key={user.id} className="bg-[#2a2b2b] p-6 rounded-2xl border border-gray-700 flex justify-between items-center mb-4">
+              <div className="text-white">
+                <h4 className="font-semibold">{user.name}</h4>
+                <p className="text-sm text-gray-400">User ID: {user.id}</p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button
+                  // onClick={() => setEditingUser(user)}
+                  className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-amber-600 text-white rounded-xl hover:from-yellow-600 hover:to-amber-700 transition-all duration-200"
+                >
+                  Edit
+                </button>
+                <button
+                  // onClick={() => deleteUser(user.id)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ProductsComponent() {
+  // const {isPending, error, data} = useQuery({queryKey: ['products'], queryFn: })
+  return (
+    <div className="space-y-8">
+      {/* Add Product Form */}
+      <div className="bg-[#2a2b2b] p-8 rounded-2xl border border-gray-700">
+        <h3 className="text-xl font-semibold text-white mb-6">Add New Product</h3>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:gap-6">
+          <div className="lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Product Name</label>
+            <input
+              type="text"
+              placeholder="Enter product name"
+              value={newProduct.name}
+              onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+              className="w-full px-4 py-3 bg-[#202121] border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+            />
+          </div>
+
+          <div className="lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Image URL</label>
+            <input
+              type="url"
+              placeholder="https://example.com/image.jpg"
+              value={newProduct.image}
+              onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+              className="w-full px-4 py-3 bg-[#202121] border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+            />
+          </div>
+
+          <div className="lg:col-span-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Price ($)</label>
+            <input
+              type="number"
+              step="0.01"
+              placeholder="0.00"
+              value={newProduct.price}
+              onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+              className="w-full px-4 py-3 bg-[#202121] border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+            />
+          </div>
+
+          <div className="lg:col-span-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Weight (kg)</label>
+            <input
+              type="number"
+              step="0.01"
+              placeholder="0.00"
+              value={newProduct.kg}
+              onChange={(e) => setNewProduct({...newProduct, kg: e.target.value})}
+              className="w-full px-4 py-3 bg-[#202121] border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+            />
+          </div>
+
+          <div className="lg:col-span-2 flex items-end">
+            <button
+              onClick={addProduct}
+              className="w-full px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-white rounded-xl hover:from-yellow-600 hover:to-amber-700 transition-all duration-200 flex items-center justify-center space-x-2 font-medium"
+            >
+              <Plus size={20} />
+              <span>Add Product</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <div key={product.id} className="bg-[#2a2b2b] rounded-2xl border border-gray-700 overflow-hidden group hover:border-amber-500/50 transition-all duration-200">
+            <div className="relative">
+              <img 
+                src={product.image} 
+                alt={product.name}
+                className="w-full h-48 object-cover"
+              />
+              <div className="absolute top-3 right-3                         bg-black bg-opacity-40 p-2 rounded-xl text-white flex items-center justify-center space-x-1">
+                <button onClick={() => setEditingProduct(product)} className="hover:bg-amber-600 rounded-full p-2">
+                  <Edit3 size={16} />
+                </button>
+                <button onClick={() => deleteProduct(product.id)} className="hover:bg-red-600 rounded-full p-2">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+            <div className="p-4">
+              <h4 className="text-lg font-semibold text-white">{product.name}</h4>
+              <p className="text-sm text-gray-400">${product.price} | {product.kg} kg</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const { logout, data } = useAuth()
+  const { logout, isAuthenticated, business, user } = useAuthStore()
   const navigate = useNavigate()
-  console.log(data)
-
-  useEffect(() => {
-    if (!data) navigate('/');
-  }, [data, navigate]);
-
+  const [newBusiness, setNewBusiness] = useState({
+    name: '',
+    address: {
+      street: '',
+      state: '',
+      country: '',
+    },
+    phone: '',
+    email: ''
+  });
+  async function handleBusinessSubmit() {
+    
+  }
+  const tgLink = `${env.VITE_CLIENT_URL}/qr/${business.id}`;
+  const qrLink = `${env.VITE_TELEGRAM_BOT_URL}?start=${business.id}`;
   // Products state
   const [products, setProducts] = useState([
     { id: 1, name: 'Bananas', image: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=300&h=200&fit=crop', price: 2.50, kg: 1.2 },
@@ -37,11 +217,11 @@ export default function Dashboard() {
   const [editingCart, setEditingCart] = useState(null);
 
   // Business state
-  const [business, setBusiness] = useState({});
+  // const [business, setBusiness] = useState({});
   const [editingBusiness, setEditingBusiness] = useState(false);
 
   // QR Code link
-  const qrLink = `${env.VITE_CLIENT_URL}/qr/01JY8XY5GE1A4MNWP2A4V9WH2P`;
+
 
   // Functions to calculate percentage changes
   const calculatePercentageChange = (newValue, oldValue) => {
@@ -122,7 +302,7 @@ export default function Dashboard() {
     </button>
   );
 
-  {return data ? (
+  {return isAuthenticated ? (
     <div className="min-h-screen bg-[#202121]">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
@@ -317,7 +497,7 @@ export default function Dashboard() {
                     <div className="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/20 transition-colors">
                       <Building2 className="w-8 h-8 text-amber-400" />
                     </div>
-                    <p className="font-semibold text-white mb-2">{business.name ? 'Edit Business Info' : 'Add Business'}</p>
+                    <p className="font-semibold text-white mb-2">{business?.name ? 'Edit Business Info' : 'Add Business'}</p>
                     <p className="text-sm text-gray-400">Manage your business info</p>
                   </button>
                 </div>
@@ -426,7 +606,7 @@ export default function Dashboard() {
               <div className="flex justify-center mb-6">
                   <QRCode 
                     value={qrLink} 
-                    className="border-20 border-white h-auto w-[50%] max-h-200 rounded-lg bg-white p-4"
+                    className="border-20 border-white h-auto w-[50%] max-h-100 rounded-lg bg-white p-4"
                     // size={200}
                   />
                 </div>
@@ -435,14 +615,18 @@ export default function Dashboard() {
                 <div className="relative w-full sm:w-1/2 bg-[#202121] border border-gray-600 rounded-xl">
                   <input
                     type="text"
-                    value={qrLink}
+                    value={`${env.VITE_TELEGRAM_BOT_URL}?start=${business.id}`}
                     readOnly
                     disabled
                     className="w-full px-6 py-3 bg-[#202121] text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 rounded-xl"
                   />
+                  {console.log(business)}
                   <div className="absolute inset-y-0 -right-4 flex items-center pr-4">
                     <button
-                      onClick={() => window.open(qrLink, '_blank')}
+                      onClick={() => navigate(`/qr/${business.id}`, {
+                        state: { store_name: business.name || 'My Store' }
+                      })}
+                      // onClick={() => window.open(qrLink, '_blank')}
                       className="px-6 py-3 bg-gradient-to-r from-blue-500 to-green-600 text-white rounded-tl-lg rounded-bl-lg hover:from-blue-600 hover:to-green-700 transition-all duration-200 flex items-center space-x-2"
                     >
                       {copied ? (
@@ -493,102 +677,161 @@ export default function Dashboard() {
           )}
           {/* Users Section */}
           {activeTab === 'users' && (
-            <div className="space-y-8">
-              {/* User Count & Filters */}
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col gap-0">
-                  <h3 className="text-xl font-semibold text-white">Users</h3>
-                  <span className="text-sm text-gray-400">Total Users: {users.length}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    placeholder="Search users"
-                    className="px-4 py-2 bg-[#202121] border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
-                  />
-                </div>
-              </div>
+            // <div className="space-y-8">
+            //   {/* User Count & Filters */}
+            //   <div className="flex justify-between items-center">
+            //     <div className="flex flex-col gap-0">
+            //       <h3 className="text-xl font-semibold text-white">Users</h3>
+            //       <span className="text-sm text-gray-400">Total Users: {users.length}</span>
+            //     </div>
+            //     <div className="flex items-center space-x-2">
+            //       <input
+            //         type="text"
+            //         placeholder="Search users"
+            //         className="px-4 py-2 bg-[#202121] border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+            //       />
+            //     </div>
+            //   </div>
 
-              {/* No users message */}
-              {users.length === 0 ? (
-                <div className="text-center text-white">
-                  <p>No users found</p>
-                </div>
-              ) : (
-                <div>
-                  {/* Users List */}
-                  {users.map((user) => (
-                    <div key={user.id} className="bg-[#2a2b2b] p-6 rounded-2xl border border-gray-700 flex justify-between items-center mb-4">
-                      <div className="text-white">
-                        <h4 className="font-semibold">{user.name}</h4>
-                        <p className="text-sm text-gray-400">User ID: {user.id}</p>
-                      </div>
-                      <div className="flex items-center space-x-4">
-                        <button
-                          onClick={() => setEditingUser(user)}
-                          className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-amber-600 text-white rounded-xl hover:from-yellow-600 hover:to-amber-700 transition-all duration-200"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteUser(user.id)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            //   {/* No users message */}
+            //   {users.length === 0 ? (
+            //     <div className="text-center text-white">
+            //       <p>No users found</p>
+            //     </div>
+            //   ) : (
+            //     <div>
+            //       {/* Users List */}
+            //       {users.map((user) => (
+            //         <div key={user.id} className="bg-[#2a2b2b] p-6 rounded-2xl border border-gray-700 flex justify-between items-center mb-4">
+            //           <div className="text-white">
+            //             <h4 className="font-semibold">{user.name}</h4>
+            //             <p className="text-sm text-gray-400">User ID: {user.id}</p>
+            //           </div>
+            //           <div className="flex items-center space-x-4">
+            //             <button
+            //               onClick={() => setEditingUser(user)}
+            //               className="px-4 py-2 bg-gradient-to-r from-yellow-500 to-amber-600 text-white rounded-xl hover:from-yellow-600 hover:to-amber-700 transition-all duration-200"
+            //             >
+            //               Edit
+            //             </button>
+            //             <button
+            //               onClick={() => deleteUser(user.id)}
+            //               className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all duration-200"
+            //             >
+            //               Delete
+            //             </button>
+            //           </div>
+            //         </div>
+            //       ))}
+            //     </div>
+            //   )}
+            // </div>
+            <UsersComponent/>
           )}
           {activeTab === 'business' && (
-            <div className="space-y-8">
-              {/* Business Info */}
-              {true ? (
-                <div className="bg-[#2a2b2b] p-6 rounded-2xl border border-gray-700">
-                  <h3 className="text-xl font-semibold text-white mb-6">No Business Info Found</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <button
-                      onClick={() => setEditingBusiness(true)}
-                      className="group p-6 border-2 border-dashed border-amber-600/30 rounded-2xl hover:border-amber-500 hover:bg-amber-500/5 transition-all duration-200 text-center"
-                    >
-                      <div className="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/20 transition-colors">
-                        <Building2 className="w-8 h-8 text-amber-400" />
-                      </div>
-                      <p className="font-semibold text-white mb-2">Add Business</p>
-                      <p className="text-sm text-gray-400">Set up your business profile</p>
-                    </button>
-
-                    <button
-                      onClick={() => setEditingAddress(true)}
-                      className="group p-6 border-2 border-dashed border-amber-600/30 rounded-2xl hover:border-amber-500 hover:bg-amber-500/5 transition-all duration-200 text-center"
-                    >
-                      <div className="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/20 transition-colors">
-                        <Package className="w-8 h-8 text-amber-400" />
-                      </div>
-                      <p className="font-semibold text-white mb-2">Assign Business Address</p>
-                      <p className="text-sm text-gray-400">Provide your business address</p>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-[#2a2b2b] p-6 rounded-2xl border border-gray-700">
-                  <h3 className="text-xl font-semibold text-white mb-6">Business Info</h3>
-                  <p className="text-sm text-gray-400">Name: {business?.name}</p>
-                  <p className="text-sm text-gray-400">Email: {business?.email}</p>
-                  {business?.address ? (
-                    <div>
-                      <p className="text-sm text-gray-400">Address: {business.address.street}, {business.address.state}, {business.address.country}</p>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-400">No Address Assigned</p>
-                  )}
-                </div>
-              )}
+  <div className="space-y-8">
+    {/* Business Info */}
+    {!business ? (
+      <div className="bg-[#2a2b2b] p-6 rounded-2xl border border-gray-700">
+        <h3 className="text-xl font-semibold text-white mb-6">No Business Info Found</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Button to Add Business */}
+          <button
+            onClick={() => setEditingBusiness(true)}
+            className="group p-6 border-2 border-dashed border-amber-600/30 rounded-2xl hover:border-amber-500 hover:bg-amber-500/5 transition-all duration-200 text-center"
+          >
+            <div className="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/20 transition-colors">
+              <Building2 className="w-8 h-8 text-amber-400" />
             </div>
-          )}
+            <p className="font-semibold text-white mb-2">Add Business</p>
+            <p className="text-sm text-gray-400">Set up your business profile</p>
+          </button>
+
+          {/* Button to Assign Business Address */}
+          <button
+            onClick={() => setEditingAddress(true)}
+            className="group p-6 rounded-2xl bg-gradient-to-r from-yellow-500 to-amber-600 hover:border-amber-500 hover:bg-amber-500/5 transition-all duration-200 text-center"
+          >
+            <div className="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/20 transition-colors">
+              <Smile className="w-20 h-auto text-white" />
+            </div>
+            <p className="font-semibold text-white mb-2">Assign Business Address</p>
+            {/* <p className="text-sm text-gray-400">Provide your business address</p> */}
+          </button>
+        </div>
+
+        {/* Add Business Form */}
+        {editingBusiness && (
+          <div className="mt-6">
+            <h4 className="text-lg text-white">Add Business Info</h4>
+            <form onSubmit={handleBusinessSubmit}>
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Business Name"
+                  className="w-full p-3 bg-[#2a2b2b] text-white border border-gray-600 rounded-xl"
+                  value={newBusiness.name}
+                  onChange={(e) => setNewBusiness({ ...newBusiness, name: e.target.value })}
+                />
+                <input
+                  type="email"
+                  placeholder="Business Email"
+                  className="w-full p-3 bg-[#2a2b2b] text-white border border-gray-600 rounded-xl"
+                  value={newBusiness.email}
+                  onChange={(e) => setNewBusiness({ ...newBusiness, email: e.target.value })}
+                />
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    placeholder="Street Address"
+                    className="w-full p-3 bg-[#2a2b2b] text-white border border-gray-600 rounded-xl"
+                    value={newBusiness.address.street}
+                    onChange={(e) => setNewBusiness({ ...newBusiness, address: { ...newBusiness.address, street: e.target.value } })}
+                  />
+                  <input
+                    type="text"
+                    placeholder="State"
+                    className="w-full p-3 bg-[#2a2b2b] text-white border border-gray-600 rounded-xl"
+                    value={newBusiness.address.state}
+                    onChange={(e) => setNewBusiness({ ...newBusiness, address: { ...newBusiness.address, state: e.target.value } })}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Country"
+                    className="w-full p-3 bg-[#2a2b2b] text-white border border-gray-600 rounded-xl"
+                    value={newBusiness.address.country}
+                    onChange={(e) => setNewBusiness({ ...newBusiness, address: { ...newBusiness.address, country: e.target.value } })}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-amber-500 text-white rounded-xl mt-4 hover:bg-amber-600"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </div>
+    ) : (
+      <div className="bg-[#2a2b2b] p-6 rounded-2xl border border-gray-700">
+        <h3 className="text-xl font-semibold text-white mb-6">Business Info</h3>
+        <p className="text-sm text-gray-400">Name: {business?.name}</p>
+        <p className="text-sm text-gray-400">Email: {business?.email}</p>
+        {business?.address ? (
+          <div>
+            <p className="text-sm text-gray-400">Address: {business.address.street}, {business.address.state}, {business.address.country}</p>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400">No Address Assigned</p>
+        )}
+      </div>
+    )}
+  </div>
+)}
+
+
 
         </main>
       </div>

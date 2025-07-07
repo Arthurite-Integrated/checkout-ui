@@ -1,26 +1,27 @@
 import {Route,BrowserRouter as Router ,  Routes} from 'react-router-dom';
-import Chat from './pages/chat';
-import QR from './pages/QR';
-import Auth from './pages/Auth';
-import useAuth from './store';
-import Dashboard from './pages/Dashboard';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import QR from './pages/Protected Routes/QR';
+import Auth from './pages/Public Routes/Auth';
+import Dashboard from './pages/Protected Routes/Dashboard';
+import ProtectedRoute from './components/ProtectedRoute ';
 
 function App() {
-  const { isAuthenticated } = useAuth()
-
   return (
     <>
-    <ToastContainer />
+      <ToastContainer />
       <Router>
         <Routes>
-          <Route path='/chat/:id' element={<Chat/>}></Route>
           <Route path='/qr/:supermarket_id' element={<QR/>}></Route>
           <Route path='/' element={<Auth/>}></Route>
-          <Route path='/dashboard' element={<Dashboard/>}></Route>
-          {/* <Route path='/escrow' element={}></Route>       
-     </Suspense>     <Route path='/court' element={}></Route>        */}
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </Router>
     </>

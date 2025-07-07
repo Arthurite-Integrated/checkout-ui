@@ -1,6 +1,7 @@
 import { MastraClient } from "@mastra/client-js";
 import env from "../config/env";
 import axios from "axios";
+import api from "../utils/axios";
  
 class Server {
   private url = env.VITE_SERVER_URL as string;
@@ -33,18 +34,22 @@ class Server {
     
   }
 
+  async getProducts() {
+    const res = api
+  }
+
   async LoginAdmin(email: string, password: string) {
-    try {
-      const res = await axios({
-        method: 'post',
-        url: `${env.VITE_SERVER_URL}/admin/login`,
-        data: { email, password }
-      })
-      return { code: res.data.statusCode, status: res.data.httpStatus, message: res.data.message, data: res.data.data}
-    } catch(e: any) {
-      console.log(e)
-      return { code: e.response.data.statusCode, status: e.response.data.httpStatus, message: e.response.data.message, data: e.response.data.data}
-    }
+      try {
+        const res = await axios({
+          method: 'post',
+          url: `${env.VITE_SERVER_URL}/admin/login`,
+          data: { email, password }
+        })
+        return { code: res.data.statusCode, status: res.data.httpStatus, message: res.data.message, data: res.data.data}
+      } catch(e: any) {
+        console.log(e)
+        return { code: e.response.data.statusCode, status: e.response.data.httpStatus, message: e.response.data.message, data: e.response.data.data}
+      }
   }
 
   async RegisterAdmin(first_name: string, last_name: string, email: string, password: string) {
@@ -63,5 +68,5 @@ class Server {
   }
 }
 
-export default new Server();
+export default new Server() as Server;
 // console.log(await new Mastra().chatAgent("last question i asked u"))
