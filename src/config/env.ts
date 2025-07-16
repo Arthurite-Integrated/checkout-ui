@@ -1,6 +1,5 @@
 import { z } from "zod"
 
-
 const EnvSchema = z.object({
   VITE_SERVER_URL: z.string(),
   VITE_CLIENT_URL: z.string(),

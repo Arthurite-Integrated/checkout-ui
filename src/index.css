@@ -3,3 +3,12 @@
 #root {
   background-color: "#1f2020";
 }
+
+.custom-toast-progress {
+  background: linear-gradient(to right, #eab308, #d97706) !important;
+  height: 4px; /* Optional: adjust height if needed */
+}
+
+.Toastify__progress-bar--bg {
+  background: #374151 !important; /* Dark gray instead of purple */
+}

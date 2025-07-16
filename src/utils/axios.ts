@@ -1,6 +1,6 @@
-import axios from 'axios';
-import env from '../config/env';
-import { useAuthStore } from '../store';
+import axios from "axios";
+import env from "../config/env";
+import { useAuthStore } from "../store";
 
 // Create axios instance
 const api = axios.create({
@@ -27,7 +27,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Token expired or invalid
       useAuthStore.getState().logout();
-      window.location.href = '/'; // Redirect to login
+      window.location.href = "/"; // Redirect to login
     }
     return Promise.reject(error);
   }
