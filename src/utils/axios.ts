@@ -6,6 +6,10 @@ import { useAuthStore } from "../store";
 const api = axios.create({
   baseURL: env.VITE_SERVER_URL, // Your API base URL
   timeout: 10000,
+  headers: {
+    'ngrok-skip-browser-warning': 'true',
+    'Content-Type': 'application/json',
+  },
 });
 
 // Request interceptor to add auth token
