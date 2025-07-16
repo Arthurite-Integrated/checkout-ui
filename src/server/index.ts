@@ -34,8 +34,10 @@ class Server {
         method: "get",
         url: `/admin/carts/${business_id}`,
       });
+      console.log(res)
       return res.data.data;
     } catch (e: any) {
+      console.log(e.response)
       console.log(e.response.data.message);
       throw new Error("Error fetching carts");
     }
@@ -47,8 +49,10 @@ class Server {
         method: "get",
         url: `/admin/users/${business_id}`,
       });
+      console.log(res)
       return res.data.data;
     } catch (e: any) {
+      console.log(e.response)
       console.log(e.response.data.message);
       throw new Error("Error fetching users");
     }
@@ -60,8 +64,10 @@ class Server {
         method: "get",
         url: `/admin/products/${business_id}`,
       });
+      console.log(res)
       return res.data.data;
     } catch (e: any) {
+      console.log(e.response)
       console.log(e.response.data.message);
       throw new Error("Error fetching products");
     }
