@@ -10,7 +10,6 @@ import {
   Users,
   Star,
   TrendingUp,
-  ScanBarcode,
   Settings2,
   DollarSign
 } from "lucide-react";
