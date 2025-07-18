@@ -12,3 +12,15 @@
 .Toastify__progress-bar--bg {
   background: #374151 !important; /* Dark gray instead of purple */
 }
+
+/* Add this to your global CSS file or Tailwind config */
+@layer utilities {
+  .scrollbar-hide {
+    /* Firefox */
+    scrollbar-width: none;
+    /* Safari and Chrome */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}

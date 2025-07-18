@@ -43,11 +43,41 @@ class Server {
     }
   }
 
+  async getOrders(business_id: string) {
+    try {
+      const res = await api({
+        method: "get",
+        url: `/admin/orders/${business_id}`,
+      });
+      console.log(res)
+      return res.data.data;
+    } catch (e: any) {
+      console.log(e.response)
+      console.log(e.response.data.message);
+      throw new Error("Error fetching users");
+    }
+  }
+
   async getUsers(business_id: string) {
     try {
       const res = await api({
         method: "get",
         url: `/admin/users/${business_id}`,
+      });
+      console.log(res)
+      return res.data.data;
+    } catch (e: any) {
+      console.log(e.response)
+      console.log(e.response.data.message);
+      throw new Error("Error fetching users");
+    }
+  }
+  
+  async getPayments(business_id: string) {
+    try {
+      const res = await api({
+        method: "get",
+        url: `/admin/payments/${business_id}`,
       });
       console.log(res)
       return res.data.data;
