@@ -272,66 +272,66 @@ export default function Dashboard() {
         {/* Main Content */}
         <div className="lg:ml-72">
           {/* Header */}
-            <header className="fixed top-0 right-0 left-0 lg:left-72 bg-[#2a2b2b] border-b border-gray-700 px-6 py-3.5 z-30">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
-              >
-                <Menu size={24} />
-              </button>
-              <div>
-                <h2 className="text-[17px] md:text-xl font-semibold text-white capitalize">
-                {activeTab === "dashboard"
-                  ? "Dashboard"
-                  : activeTab === "qr"
-                  ? "QR Store Link"
-                  : activeTab === "verify"
-                  ? "Verify Payments"
-                  : activeTab === "settings"
-                  ? "Settings"
-                  : activeTab.replace("-", " ")}
-                </h2>
-                <p className="text-sm text-gray-400">
-                {activeTab === "dashboard"
-                  ? "Manage your supermarket efficiently"
-                  : activeTab === "qr"
-                  ? "Share your store with customers"
-                  : activeTab === "verify"
-                  ? "Confirm your customer payments"
-                  : activeTab === "settings"
-                  ? "Welcome to admin settings 😊"
-                  : `Manage your ${activeTab.replace("-", " ")}`}
-                </p>
-              </div>
-              </div>
-              <div className="flex items-center space-x-4">
-              <div className="hidden sm:flex items-center space-x-2 text-gray-400">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm">Online</span>
-              </div>
-              <div
-                onClick={handleRefresh}
-                className="w-fit px-3 gap-1 h-10 bg-[#202121] border-[#4a5565] border-1 to-amber-600 rounded-xl flex items-center justify-center text-white font-semibold"
-              >
-                <Refresh
-                className={`w-5 h-auto text-amber-400 transition-transform duration-500 ${
-                  isRefreshing ? "animate-spin" : ""
-                }`}
-                />
-                <span>Refresh</span>
-              </div>
-              <div className='relative ml-7'>
-                <Avatar className="w-10 h-10" {...config} />
-                <div className="absolute -left-8 top-0 w-10 h-10 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full flex items-center justify-center text-white font-semibold">
-                {user.first_name[0].toUpperCase() +
-                  user.last_name[0].toUpperCase()}
-                </div>
-              </div>
+          <header className="fixed top-0 right-0 left-0 lg:left-72 bg-[#2a2b2b] border-b border-gray-700 px-6 py-3.5 z-30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+            >
+              <Menu size={24} />
+            </button>
+            <div>
+              <h2 className="text-[17px] md:text-xl font-semibold text-white capitalize">
+              {activeTab === "dashboard"
+                ? "Dashboard"
+                : activeTab === "qr"
+                ? "QR Store Link"
+                : activeTab === "verify"
+                ? "Verify Payments"
+                : activeTab === "settings"
+                ? "Settings"
+                : activeTab.replace("-", " ")}
+              </h2>
+              <p className="text-sm text-gray-400">
+              {activeTab === "dashboard"
+                ? "Manage your supermarket efficiently"
+                : activeTab === "qr"
+                ? "Share your store with customers"
+                : activeTab === "verify"
+                ? "Confirm your customer payments"
+                : activeTab === "settings"
+                ? "Welcome to admin settings 😊"
+                : `Manage your ${activeTab.replace("-", " ")}`}
+              </p>
+            </div>
+            </div>
+            <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex items-center space-x-2 text-gray-400">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm">Online</span>
+            </div>
+            <div
+              onClick={handleRefresh}
+              className="w-fit px-3 gap-1 h-10 bg-[#202121] border-[#4a5565] border-1 to-amber-600 rounded-xl flex items-center justify-center text-white font-semibold"
+            >
+              <Refresh
+              className={`w-5 h-auto text-amber-400 transition-transform duration-500 ${
+                isRefreshing ? "animate-spin" : ""
+              }`}
+              />
+              <span className='hidden md:block'>Refresh</span>
+            </div>
+            <div className='relative ml-7'>
+              <Avatar className="w-10 h-10" {...config} />
+              <div className="absolute -left-8 top-0 w-10 h-10 bg-gradient-to-r from-yellow-500 to-amber-600 rounded-full flex items-center justify-center text-white font-semibold">
+              {user.first_name[0].toUpperCase() +
+                user.last_name[0].toUpperCase()}
               </div>
             </div>
-            </header>
+            </div>
+          </div>
+          </header>
 
           {/* Content */}
           <main className="p-6 flex-1 overflow-y-auto pt-35 md:pt-25">
