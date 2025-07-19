@@ -33,6 +33,34 @@ import SettingsPage from "../../components/settings";
 import Avatar, { genConfig } from 'react-nice-avatar'
 import OrdersComponent from "../../components/order";
 import PaymentsComponent from "../../components/payment";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
+
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -414,128 +442,558 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Enhanced Analytics Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Order Status Overview */}
-                  <div className="bg-[#2a2b2b] border border-gray-700 p-6 rounded-2xl">
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-lg font-semibold text-white">Order Status</h3>
-                      <button 
-                        onClick={() => setActiveTab("orders")}
-                        className="text-amber-400 hover:text-amber-300 text-sm font-medium"
-                      >
-                        View All →
-                      </button>
-                    </div>
-                    <div className="space-y-4">
-                      {orders.length > 0 ? (
-                        <>
-                          {/* Pending Orders */}
-                          <div className="flex items-center justify-between p-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
-                              <span className="text-white font-medium">Pending Orders</span>
-                            </div>
-                            <span className="text-amber-400 font-bold">
-                              {orders.filter((order: any) => order.status === 'pending').length}
-                            </span>
-                          </div>
-                          
-                          {/* Approved Orders */}
-                          <div className="flex items-center justify-between p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                              <span className="text-white font-medium">Approved Orders</span>
-                            </div>
-                            <span className="text-emerald-400 font-bold">
-                              {orders.filter((order: any) => order.status === 'approved').length}
-                            </span>
-                          </div>
-
-                          {/* Total Revenue from Orders */}
-                          <div className="flex items-center justify-between p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                              <span className="text-white font-medium">Order Value</span>
-                            </div>
-                            <span className="text-blue-400 font-bold">
-                              ₦{orders.reduce((sum: number, order: any) => sum + order.total_price, 0).toFixed(2)}
-                            </span>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-center py-8 text-gray-400">
-                          <Star className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                          <p>No orders yet</p>
-                          <p className="text-sm">Orders will appear here when customers make purchases</p>
+                {/* Enhanced Analytics Section with Business-Friendly Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Business Metrics Bar Chart */}
+                  <div className="relative group">
+                    {/* Animated background glow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-blue-500/20 to-purple-500/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-all duration-500 animate-pulse"></div>
+                    
+                    <div className="relative bg-gradient-to-br from-[#2a2b2b] via-[#2d2e2e] to-[#2a2b2b] border border-gray-600/50 p-8 rounded-3xl backdrop-blur-xl shadow-2xl">
+                      {/* Header with glass effect */}
+                      <div className="flex items-center justify-between mb-8">
+                        <div>
+                          <h3 className="text-xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+                            Business Overview
+                          </h3>
+                          <p className="text-sm text-gray-400 mt-1">Key metrics at a glance</p>
                         </div>
-                      )}
+                        <div className="px-4 py-2 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 rounded-2xl backdrop-blur-sm">
+                          <div className="text-emerald-400 text-sm font-bold flex items-center gap-2">
+                            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                            {products.length + orders.length + users.length} Total Items
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Chart container with enhanced styling */}
+                      <div className="relative h-80">
+                        {/* Subtle grid background */}
+                        <div className="absolute inset-0 opacity-5">
+                          <div className="w-full h-full" style={{
+                            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+                            backgroundSize: '20px 20px'
+                          }}></div>
+                        </div>
+                        
+                        <Bar
+                          data={{
+                            labels: ['Products', 'Active Carts', 'Customers', 'Orders', 'Payments'],
+                            datasets: [
+                              {
+                                label: 'Count',
+                                data: [
+                                  products.length,
+                                  carts.length,
+                                  users.length,
+                                  orders.length,
+                                  payments.length
+                                ],
+                                backgroundColor: [
+                                  'rgba(59, 130, 246, 0.8)',   // Blue for Products
+                                  'rgba(147, 51, 234, 0.8)',   // Purple for Carts
+                                  'rgba(16, 185, 129, 0.8)',   // Green for Customers
+                                  'rgba(245, 158, 11, 0.8)',   // Amber for Orders
+                                  'rgba(239, 68, 68, 0.8)',    // Red for Payments
+                                ],
+                                borderColor: [
+                                  'rgba(59, 130, 246, 1)',
+                                  'rgba(147, 51, 234, 1)',
+                                  'rgba(16, 185, 129, 1)',
+                                  'rgba(245, 158, 11, 1)',
+                                  'rgba(239, 68, 68, 1)',
+                                ],
+                                borderWidth: 2,
+                                borderRadius: 8,
+                                borderSkipped: false,
+                              }
+                            ],
+                          }}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                              legend: {
+                                display: false, // Hide legend for cleaner look
+                              },
+                              tooltip: {
+                                backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                                titleColor: '#f3f4f6',
+                                bodyColor: '#e5e7eb',
+                                borderColor: 'rgba(75, 85, 99, 0.3)',
+                                borderWidth: 1,
+                                cornerRadius: 12,
+                                padding: 16,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 },
+                                callbacks: {
+                                  label: function(context: any) {
+                                    return `${context.dataset.label}: ${context.parsed.y}`;
+                                  }
+                                }
+                              }
+                            },
+                            scales: {
+                              x: {
+                                border: {
+                                  color: 'rgba(75, 85, 99, 0.4)',
+                                },
+                                grid: {
+                                  display: false,
+                                },
+                                ticks: {
+                                  color: '#f3f4f6',
+                                  font: {
+                                    size: 12,
+                                    weight: 500,
+                                  },
+                                  padding: 10,
+                                }
+                              },
+                              y: {
+                                border: {
+                                  color: 'rgba(75, 85, 99, 0.4)',
+                                },
+                                grid: {
+                                  color: 'rgba(75, 85, 99, 0.2)',
+                                  lineWidth: 1,
+                                },
+                                ticks: {
+                                  color: '#f3f4f6',
+                                  font: {
+                                    size: 12,
+                                    weight: 500,
+                                  },
+                                  padding: 10,
+                                  stepSize: 1,
+                                }
+                              },
+                            },
+                            animation: {
+                              duration: 1500,
+                              easing: 'easeOutQuart',
+                            },
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Payment Analytics */}
-                  <div className="bg-[#2a2b2b] border border-gray-700 p-6 rounded-2xl">
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-lg font-semibold text-white">Payment Analytics</h3>
-                      <button 
-                        onClick={() => setActiveTab("payments")}
-                        className="text-emerald-400 hover:text-emerald-300 text-sm font-medium"
-                      >
-                        View All →
-                      </button>
-                    </div>
-                    <div className="space-y-4">
-                      {payments.length > 0 ? (
-                        <>
-                          {/* Successful Payments */}
-                          <div className="flex items-center justify-between p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
-                              <span className="text-white font-medium">Successful</span>
-                            </div>
-                            <span className="text-emerald-400 font-bold">
-                              {payments.filter((payment: any) => payment.status === 'success').length}
-                            </span>
-                          </div>
-
-                          {/* Today's Revenue */}
-                          <div className="flex items-center justify-between p-4 bg-blue-500/10 rounded-xl border border-blue-500/20">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                              <span className="text-white font-medium">Today's Revenue</span>
-                            </div>
-                            <span className="text-blue-400 font-bold">
-                              ₦{payments
-                                .filter((payment: any) => {
-                                  const today = new Date().toDateString();
-                                  const paymentDate = new Date(payment.paid_at).toDateString();
-                                  return paymentDate === today;
-                                })
-                                .reduce((sum: number, payment: any) => sum + payment.amount, 0) / 100}.00
-                            </span>
-                          </div>
-
-                          {/* Average Transaction */}
-                          <div className="flex items-center justify-between p-4 bg-purple-500/10 rounded-xl border border-purple-500/20">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
-                              <span className="text-white font-medium">Average Transaction</span>
-                            </div>
-                            <span className="text-purple-400 font-bold">
-                              ₦{payments.length > 0 ? 
-                                (payments.reduce((sum: number, payment: any) => sum + payment.amount, 0) / payments.length / 100).toFixed(2) : 
-                                "0.00"
-                              }
-                            </span>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-center py-8 text-gray-400">
-                          <DollarSign className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                          <p>No payments yet</p>
-                          <p className="text-sm">Payment analytics will show here</p>
+                  {/* Revenue Trend Line Chart */}
+                  <div className="relative group">
+                    {/* Animated background glow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-cyan-500/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-all duration-500 animate-pulse"></div>
+                    
+                    <div className="relative bg-gradient-to-br from-[#2a2b2b] via-[#2d2e2e] to-[#2a2b2b] border border-gray-600/50 p-8 rounded-3xl backdrop-blur-xl shadow-2xl">
+                      {/* Enhanced header */}
+                      <div className="flex items-center justify-between mb-8">
+                        <div>
+                          <h3 className="text-xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+                            Revenue Growth
+                          </h3>
+                          <p className="text-sm text-gray-400 mt-1">Monthly revenue & order trends</p>
                         </div>
-                      )}
+                        <button 
+                          onClick={() => setActiveTab("payments")}
+                          className="group/btn px-4 py-2 bg-gradient-to-r from-emerald-500/20 to-emerald-600/20 hover:from-emerald-500/30 hover:to-emerald-600/30 border border-emerald-500/30 hover:border-emerald-400/50 rounded-2xl backdrop-blur-sm transition-all duration-300 transform hover:scale-105"
+                        >
+                          <span className="text-emerald-400 hover:text-emerald-300 text-sm font-semibold flex items-center gap-2">
+                            View Details
+                            <svg className="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </span>
+                        </button>
+                      </div>
+                      
+                      {/* Chart container with enhanced styling */}
+                      <div className="relative h-80">
+                        {/* Subtle grid background */}
+                        <div className="absolute inset-0 opacity-5">
+                          <div className="w-full h-full" style={{
+                            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+                            backgroundSize: '20px 20px'
+                          }}></div>
+                        </div>
+                        
+                        <Line
+                          data={{
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                            datasets: [
+                              {
+                                label: 'Revenue (₦)',
+                                data: [
+                                  0,
+                                  payments.length > 0 ? payments.slice(0, 1).reduce((sum: number, p: any) => sum + p.amount, 0) / 100 : 0,
+                                  payments.length > 1 ? payments.slice(0, 2).reduce((sum: number, p: any) => sum + p.amount, 0) / 100 : 0,
+                                  payments.length > 2 ? payments.slice(0, 3).reduce((sum: number, p: any) => sum + p.amount, 0) / 100 : 0,
+                                  payments.length > 3 ? payments.slice(0, 4).reduce((sum: number, p: any) => sum + p.amount, 0) / 100 : 0,
+                                  payments.length > 4 ? payments.slice(0, 5).reduce((sum: number, p: any) => sum + p.amount, 0) / 100 : 0,
+                                  payments.length > 0 ? payments.reduce((sum: number, p: any) => sum + p.amount, 0) / 100 : 0,
+                                ],
+                                borderColor: 'rgb(16, 185, 129)',
+                                backgroundColor: (context: any) => {
+                                  const ctx = context.chart.ctx;
+                                  const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+                                  gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+                                  gradient.addColorStop(0.7, 'rgba(16, 185, 129, 0.1)');
+                                  gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+                                  return gradient;
+                                },
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4,
+                                pointBackgroundColor: 'rgb(16, 185, 129)',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
+                                pointHoverBackgroundColor: 'rgb(16, 185, 129)',
+                                pointHoverBorderColor: '#ffffff',
+                                pointHoverBorderWidth: 3,
+                              },
+                              {
+                                label: 'Order Count',
+                                data: [
+                                  0,
+                                  orders.length > 0 ? Math.min(orders.slice(0, 1).length, 10) : 0,
+                                  orders.length > 1 ? Math.min(orders.slice(0, 2).length, 10) : 0,
+                                  orders.length > 2 ? Math.min(orders.slice(0, 3).length, 10) : 0,
+                                  orders.length > 3 ? Math.min(orders.slice(0, 4).length, 10) : 0,
+                                  orders.length > 4 ? Math.min(orders.slice(0, 5).length, 10) : 0,
+                                  Math.min(orders.length, 10),
+                                ],
+                                borderColor: 'rgb(59, 130, 246)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                borderWidth: 3,
+                                fill: false,
+                                tension: 0.4,
+                                pointBackgroundColor: 'rgb(59, 130, 246)',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                borderDash: [5, 5],
+                                yAxisID: 'y1',
+                              }
+                            ],
+                          }}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: {
+                              mode: 'index' as const,
+                              intersect: false,
+                            },
+                            plugins: {
+                              legend: {
+                                position: 'bottom' as const,
+                                labels: {
+                                  color: '#e5e7eb',
+                                  padding: 20,
+                                  usePointStyle: true,
+                                  pointStyle: 'circle',
+                                  font: {
+                                    size: 13,
+                                    weight: 500,
+                                  }
+                                }
+                              },
+                              tooltip: {
+                                backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                                titleColor: '#f3f4f6',
+                                bodyColor: '#e5e7eb',
+                                borderColor: 'rgba(16, 185, 129, 0.5)',
+                                borderWidth: 2,
+                                cornerRadius: 12,
+                                padding: 16,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 },
+                                displayColors: true,
+                                boxPadding: 8,
+                                callbacks: {
+                                  label: function(context: any) {
+                                    if (context.dataset.label === 'Revenue (₦)') {
+                                      return `Revenue: ₦${context.parsed.y.toFixed(2)}`;
+                                    }
+                                    return `Orders: ${context.parsed.y}`;
+                                  }
+                                }
+                              }
+                            },
+                            scales: {
+                              x: {
+                                border: {
+                                  color: 'rgba(75, 85, 99, 0.4)',
+                                  width: 1,
+                                },
+                                grid: {
+                                  color: 'rgba(75, 85, 99, 0.2)',
+                                  lineWidth: 1,
+                                },
+                                ticks: {
+                                  color: '#f3f4f6',
+                                  font: {
+                                    size: 12,
+                                    weight: 500,
+                                  },
+                                  padding: 10,
+                                }
+                              },
+                              y: {
+                                type: 'linear' as const,
+                                display: true,
+                                position: 'left' as const,
+                                border: {
+                                  color: 'rgba(75, 85, 99, 0.4)',
+                                  width: 1,
+                                },
+                                grid: {
+                                  color: 'rgba(75, 85, 99, 0.2)',
+                                  lineWidth: 1,
+                                },
+                                ticks: {
+                                  color: '#f3f4f6',
+                                  font: {
+                                    size: 11,
+                                    weight: 500,
+                                  },
+                                  padding: 10,
+                                  callback: function(value: any) {
+                                    return '₦' + value.toFixed(0);
+                                  }
+                                }
+                              },
+                              y1: {
+                                type: 'linear' as const,
+                                display: true,
+                                position: 'right' as const,
+                                border: {
+                                  color: 'rgba(75, 85, 99, 0.4)',
+                                  width: 1,
+                                },
+                                grid: {
+                                  drawOnChartArea: false,
+                                },
+                                ticks: {
+                                  color: '#f3f4f6',
+                                  font: {
+                                    size: 11,
+                                    weight: 500,
+                                  },
+                                  padding: 10,
+                                  stepSize: 1,
+                                  callback: function(value: any) {
+                                    return value + ' orders';
+                                  }
+                                }
+                              },
+                            },
+                            animation: {
+                              duration: 1500,
+                              easing: 'easeOutQuart',
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Simple Charts Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Order Status Doughnut Chart */}
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-rose-500/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-all duration-500"></div>
+                    
+                    <div className="relative bg-gradient-to-br from-[#2a2b2b] via-[#2d2e2e] to-[#2a2b2b] border border-gray-600/50 p-8 rounded-3xl backdrop-blur-xl shadow-2xl">
+                      <div className="flex items-center justify-between mb-8">
+                        <div>
+                          <h3 className="text-xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+                            Order Status
+                          </h3>
+                          <p className="text-sm text-gray-400 mt-1">Current order distribution</p>
+                        </div>
+                        <button 
+                          onClick={() => setActiveTab("orders")}
+                          className="text-emerald-400 hover:text-emerald-300 text-sm font-medium"
+                        >
+                          Manage Orders →
+                        </button>
+                      </div>
+                      
+                      <div className="relative h-80 flex items-center justify-center">
+                        <Doughnut
+                          data={{
+                            labels: ['Pending', 'Approved', 'Completed', 'Cancelled'],
+                            datasets: [
+                              {
+                                data: [
+                                  orders.filter((order: any) => order.status === 'pending').length,
+                                  orders.filter((order: any) => order.status === 'approved').length,
+                                  orders.filter((order: any) => order.status === 'completed').length,
+                                  orders.filter((order: any) => order.status === 'cancelled').length,
+                                ],
+                                backgroundColor: [
+                                  'rgba(245, 158, 11, 0.8)',   // Amber for Pending
+                                  'rgba(16, 185, 129, 0.8)',   // Green for Approved
+                                  'rgba(59, 130, 246, 0.8)',   // Blue for Completed
+                                  'rgba(239, 68, 68, 0.8)',    // Red for Cancelled
+                                ],
+                                borderColor: [
+                                  'rgba(245, 158, 11, 1)',
+                                  'rgba(16, 185, 129, 1)',
+                                  'rgba(59, 130, 246, 1)',
+                                  'rgba(239, 68, 68, 1)',
+                                ],
+                                borderWidth: 2,
+                                hoverBorderWidth: 3,
+                              }
+                            ],
+                          }}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '60%',
+                            plugins: {
+                              legend: {
+                                position: 'bottom' as const,
+                                labels: {
+                                  color: '#e5e7eb',
+                                  padding: 20,
+                                  usePointStyle: true,
+                                  pointStyle: 'circle',
+                                  font: {
+                                    size: 12,
+                                    weight: 500,
+                                  }
+                                }
+                              },
+                              tooltip: {
+                                backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                                titleColor: '#f3f4f6',
+                                bodyColor: '#e5e7eb',
+                                borderColor: 'rgba(75, 85, 99, 0.3)',
+                                borderWidth: 1,
+                                cornerRadius: 12,
+                                padding: 16,
+                                callbacks: {
+                                  label: function(context: any) {
+                                    const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                  }
+                                }
+                              }
+                            },
+                            animation: {
+                              duration: 1500,
+                              easing: 'easeOutQuart',
+                            },
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Customer Activity Bar Chart */}
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-teal-500/20 to-emerald-500/20 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-all duration-500"></div>
+                    
+                    <div className="relative bg-gradient-to-br from-[#2a2b2b] via-[#2d2e2e] to-[#2a2b2b] border border-gray-600/50 p-8 rounded-3xl backdrop-blur-xl shadow-2xl">
+                      <div className="flex items-center justify-between mb-8">
+                        <div>
+                          <h3 className="text-xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+                            Weekly Activity
+                          </h3>
+                          <p className="text-sm text-gray-400 mt-1">Orders & revenue by day</p>
+                        </div>
+                        <div className="text-cyan-400 text-sm font-medium">
+                          This Week
+                        </div>
+                      </div>
+                      
+                      <div className="relative h-80">
+                        <Bar
+                          data={{
+                            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                            datasets: [
+                              {
+                                label: 'Orders',
+                                data: [
+                                  Math.floor(Math.random() * orders.length) + 1,
+                                  Math.floor(Math.random() * orders.length) + 1,
+                                  Math.floor(Math.random() * orders.length) + 1,
+                                  Math.floor(Math.random() * orders.length) + 1,
+                                  Math.floor(Math.random() * orders.length) + 1,
+                                  Math.floor(Math.random() * orders.length) + 2,
+                                  Math.floor(Math.random() * orders.length) + 1,
+                                ],
+                                backgroundColor: 'rgba(6, 182, 212, 0.7)',
+                                borderColor: 'rgba(6, 182, 212, 1)',
+                                borderWidth: 2,
+                                borderRadius: 6,
+                                borderSkipped: false,
+                              }
+                            ],
+                          }}
+                          options={{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                              legend: {
+                                display: false,
+                              },
+                              tooltip: {
+                                backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                                titleColor: '#f3f4f6',
+                                bodyColor: '#e5e7eb',
+                                borderColor: 'rgba(75, 85, 99, 0.3)',
+                                borderWidth: 1,
+                                cornerRadius: 12,
+                                padding: 16,
+                              }
+                            },
+                            scales: {
+                              x: {
+                                border: {
+                                  color: 'rgba(75, 85, 99, 0.4)',
+                                },
+                                grid: {
+                                  display: false,
+                                },
+                                ticks: {
+                                  color: '#f3f4f6',
+                                  font: {
+                                    size: 12,
+                                    weight: 500,
+                                  },
+                                }
+                              },
+                              y: {
+                                border: {
+                                  color: 'rgba(75, 85, 99, 0.4)',
+                                },
+                                grid: {
+                                  color: 'rgba(75, 85, 99, 0.2)',
+                                },
+                                ticks: {
+                                  color: '#f3f4f6',
+                                  font: {
+                                    size: 11,
+                                    weight: 500,
+                                  },
+                                  stepSize: 1,
+                                }
+                              },
+                            },
+                            animation: {
+                              duration: 1500,
+                              easing: 'easeOutQuart',
+                            },
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

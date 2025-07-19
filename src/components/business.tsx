@@ -357,13 +357,18 @@ export default function BusinessComponent({ business }: { business: Business }) 
               alt="Business"
               className="w-28 h-28 rounded-full object-cover border-2 border-gray-600 shadow-lg transition-transform duration-300 hover:scale-105"
             />
-          ) : (
+          ) : 
+          business.image ? (
             <div className="w-28 h-28 rounded-full bg-gray-800 flex items-center justify-center border-2 border-gray-600 shadow-inner">
               <img
               src={business.image}
               alt="Business"
               className="w-28 h-28 rounded-full object-cover border-2 border-gray-600 shadow-lg transition-transform duration-300 hover:scale-105"
             />
+            </div>
+          ) : (
+            <div className="w-28 h-28 rounded-full bg-gray-800 flex items-center justify-center border-2 border-gray-600 shadow-inner">
+              <p className='text-center text-gray-400 text-sm'>Upload your business logo</p>
             </div>
           )}
           <label className="absolute bottom-0 translate-y-1/2 bg-gray-700 hover:bg-gray-600 border border-gray-500 p-2 rounded-full cursor-pointer shadow-md transition-colors duration-200">
